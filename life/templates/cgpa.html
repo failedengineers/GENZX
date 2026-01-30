@@ -1,0 +1,137 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+  <link rel="stylesheet" href="{% static 'css/cgpa.css' %}">
+  <meta name="description" content="Calculate your CGPA quickly by adding marks and credits. Instant results online.">
+  <meta name="robots" content="index, follow">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+
+<div class="cgpa-container">
+  <h1>CGPA Calculator</h1>
+  <p class="info-text">
+    Calculate your CGPA easily by selecting the number of subjects,
+    entering credits and grade points.
+  </p>
+
+  <form method="POST" class="cgpa-form">
+    {% csrf_token %}
+
+    <label class="range-label">
+      Number of Subjects:
+      <span id="count">2</span>
+    </label>
+
+    <input type="range" min="2" max="20" value="2" id="subjectRange">
+
+    <div id="subjects"></div>
+
+    <button type="submit" class="btn">Calculate CGPA</button>
+  </form>
+  {% if error %}
+  <div class="error-box">
+    <p style="color:red;">{{ error }}</p>
+  </div>
+  {% endif %}
+
+
+  {% if cgpa %}
+  <div class="result-box">
+    <h2>Your CGPA: <span>{{ cgpa }}</span></h2>
+  </div>
+  {% endif %}
+
+<div class="formula-box">
+  <h3>Formula Used</h3>
+  <p>
+    CGPA = Σ (Grade Point × Credits) ÷ Σ Credits
+  </p>
+  <p>
+    Where:<br>
+    - Grade Point is assigned according to your university grading system.<br>
+  </p>
+  <p>
+    <strong>Maximum Marks:</strong> 100 per subject<br>
+    <strong>CGPA Scale:</strong> 0 – 10
+  </p>
+</div>
+
+    <div class="grade-reference">
+  <h3>Grade Point Reference</h3>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Grade</th>
+        <th>Grade Point</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>O</td><td>10</td></tr>
+      <tr><td>A+</td><td>9</td></tr>
+      <tr><td>A</td><td>8</td></tr>
+      <tr><td>B+</td><td>7</td></tr>
+      <tr><td>B</td><td>6</td></tr>
+      <tr><td>C</td><td>5</td></tr>
+      <tr><td>P</td><td>4</td></tr>
+      <tr><td>F</td><td>0</td></tr>
+    </tbody>
+  </table>
+
+  <p class="note">
+    Note: Grade points may vary slightly depending on university rules.
+  </p>
+</div>
+
+
+
+<script>
+const range = document.getElementById("subjectRange");
+const count = document.getElementById("count");
+const subjectsDiv = document.getElementById("subjects");
+
+function preventInvalidKeys(e) {
+  if (e.key === '-' || e.key === 'e' || e.key === 'E' || e.key === '.') {
+    e.preventDefault();
+  }
+}
+
+function createFields(n) {
+  subjectsDiv.innerHTML = "";
+
+  for (let i = 1; i <= n; i++) {
+    subjectsDiv.innerHTML += `
+      <div class="subject-row">
+        <input 
+          type="number"
+          name="grades[]"
+          min="1"
+          step="1"
+          placeholder="Marks"
+          onkeydown="preventInvalidKeys(event)"
+          required
+        >
+
+        <input 
+          type="number"
+          name="credits[]"
+          min="1"
+          step="1"
+          placeholder="Credits"
+          onkeydown="preventInvalidKeys(event)"
+          required
+        >
+      </div>
+    `;
+  }
+}
+
+range.oninput = () => {
+  count.innerText = range.value;
+  createFields(range.value);
+};
+
+createFields(2);
+</script>
+{%endblock content%}

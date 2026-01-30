@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{%load static%}
+{% block content %}
+
+<!-- PASTE THE ABOUT SECTION I GAVE YOU HERE -->
+ <link rel="stylesheet" href="{% static 'css/about.css' %}">
+
+<section class="about-section">
+  <h1 class="page-title">ABOUT US</h1>
+
+  <div class="about-box">
+    <h3>Our Motivation</h3>
+    <p>
+      Hour Zero was created with a simple goal — to help students learn smarter,
+      faster, and with clarity. We believe quality education should be accessible.
+    </p>
+  </div>
+
+  <div class="about-box">
+    <h3>Our Vision</h3>
+    <p>
+      Hour Zero is a student-focused academic platform designed to simplify learning and exam preparation.
+We provide well-organized notes, updated syllabi, and subject-wise study material to help students focus on understanding concepts instead of searching for resources.
+
+Our goal is to make quality academic material easily accessible, reliable, and structured for every learner.
+    </p>
+  </div>
+
+  <h2 class="team-title">MEET THE FOUNDER</h2>
+
+  <div class="team-container">
+    <div class="team-card">
+      <img src="{%  static 'image/handsome.jpg' %}" alt="Team Member">
+
+      <div class="team-overlay">
+        <h3>Kalash Gulati</h3>
+        <p class="font-normal text-base">Computer Science Engineering</p>
+        <p class="font-normal text-base">Python & Web Developer</p>
+        <p class="font-normal text-base">AI Enthusiast</p>
+
+        <div class="team-links">
+          <a href="https://github.com/failedengineers" target="_blank">GitHub</a>
+          <a href="https://linkedin.com/in/kalash-gulati-789815321" target="_blank">LinkedIn</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}

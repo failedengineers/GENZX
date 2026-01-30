@@ -1,0 +1,415 @@
+{% extends "base.html" %}
+{% block content %}
+
+<!-- layout wrapper -->
+<div class="page-wrapper">
+
+  <!-- LEFT SIDEBAR (populated from backend) -->
+  <aside class="sidebar">
+    <h3>SELECT A SUBJECT</h3>
+    <ul class="subject-list">
+      {% for subject in subjects %}
+        <li data-subject-id="{{ subject.id }}">{{ subject.name }}</li>
+      {% empty %}
+        <li>No subjects available</li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+    <!-- Tabs -->
+    <nav class="resource-tabs" role="tablist" aria-label="Resource types">
+      <button class="tab active" data-type="syllabus">Syllabus</button>
+      <button class="tab" data-type="notes">Notes</button>
+      <button class="tab" data-type="assignment">Assignments</button>
+      <button class="tab" data-type="lab">Lab File</button>
+      <button class="tab" data-type="pyq">PYQs</button>
+      <button class="tab" data-type="video">Videos</button>
+      <button class="tab" data-type="other">Others</button>
+
+    </nav>
+
+    <!-- Subject title -->
+    <div id="subject-title" class="subject-title">Select a subject</div>
+
+    <!-- Resources container: each tab content will be rendered here -->
+    <section id="resources-container" class="resources-container">
+      <p class="hint">Choose a subject from the left to load resources.</p>
+    </section>
+  </main>
+</div>
+
+<!-- STYLES: responsive and clean -->
+<style>
+/* base reset for this template only */
+.page-wrapper { display: flex; gap: 30px; padding: 30px; }
+
+/* SIDEBAR */
+.sidebar {
+  width: 260px;
+  background: #0b0b0b;
+  padding: 20px;
+  color: #fff;
+  border-radius: 6px;
+  height: calc(100vh - 60px);
+  overflow-y: auto;
+}
+.sidebar h3 { font-size: 13px; margin-bottom: 16px; letter-spacing: 1px; color:#ddd; }
+.subject-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 8px; }
+.subject-list li {
+  padding: 12px 10px;
+  cursor: pointer;
+  font-size: 14px;
+  border-radius: 6px;
+  background: transparent;
+  transition: background .15s ease, transform .12s ease;
+  color: #eee;
+}
+.subject-list li:hover { background: rgba(106,0,255,0.12); transform: translateY(-1px); }
+.subject-list li.active { background: #6a00ff; color: #fff; transform: none; }
+
+/* MAIN */
+.main-content { flex: 1; min-height: 60vh; color: #eee; }
+
+/* Tabs */
+.resource-tabs { display:flex; gap:14px; flex-wrap:wrap; margin-bottom:20px; }
+.resource-tabs .tab {
+  background: transparent;
+  color: #ddd;
+  border: none;
+  padding: 10px 14px;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  font-weight: 600;
+}
+.resource-tabs .tab.active { color:#fff; border-bottom-color:#6a00ff; }
+
+/* Subject title */
+.subject-title { font-size: 22px; font-weight:700; margin-bottom:18px; }
+.subject-title { display: none; }
+
+/* Resources list (accordion) */
+.resources-container .unit {
+  background: #0f1720;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255,255,255,0.03);
+}
+.unit .unit-btn {
+  width: 100%;
+  text-align: left;
+  padding: 16px;
+  cursor: pointer;
+  background: #0f1720;
+  color: #fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  border: none;
+  font-weight:700;
+}
+.unit .unit-content {
+  padding: 14px 16px;
+  display: none;
+  color: #d7d7d7;
+  background: rgba(255,255,255,0.01);
+}
+.unit .unit-content p { margin-bottom: 8px; line-height:1.5; }
+.unit .unit-content a { display:inline-block; margin-right:12px; color:#9ad1ff; text-decoration: underline; }
+
+/* hint */
+.hint { color: #bbb; padding: 20px 10px; }
+
+/* responsive behaviour */
+@media (max-width: 992px) {
+  .page-wrapper { padding: 18px; gap: 18px; }
+  .sidebar { width: 220px; height: auto; max-height: none; }
+  .resource-tabs { gap:10px; }
+}
+@media (max-width: 768px) {
+  /* stack and put sidebar on top as horizontal scroller */
+  .page-wrapper { flex-direction: column; padding: 12px; }
+  .sidebar {
+    width: 100%;
+    display:flex;
+    flex-direction:row;
+    align-items:center;
+    padding:10px;
+    overflow-x:auto;
+    height:auto;
+    border-radius:6px;
+  }
+  .sidebar h3 { display:none; }
+  .subject-list { flex-direction: row; gap: 10px; }
+  .subject-list li { white-space:nowrap; padding:8px 12px; font-size:13px; border-radius:6px; }
+}
+
+/* Resource link button */
+.resource-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+
+  margin-top: 8px;
+  padding: 8px 14px;
+
+  background: linear-gradient(135deg, #6a00ff, #8f3dff);
+  color: #fff !important;
+
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+
+  border-radius: 999px;
+  transition: transform 0.15s ease, box-shadow 0.15s ease, opacity 0.15s;
+}
+
+.resource-link:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(106, 0, 255, 0.35);
+  opacity: 0.95;
+}
+
+.resource-link:active {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* tiny loader */
+.__res-loader {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  border: 3px solid rgba(255,255,255,0.12);
+  border-top-color: #6a00ff;
+  border-radius: 50%;
+  animation: __spin 0.8s linear infinite;
+  vertical-align: middle;
+  margin-left: 8px;
+}
+@keyframes __spin { to { transform: rotate(360deg); } }
+
+/* optional: dim resources while loading */
+.resources-container.loading { opacity: 0.6; pointer-events: none; transition: opacity .18s; }
+</style>
+
+<!-- JS: fetch resources for clicked subject, render grouped by type, tabs filter -->
+
+<!-- REPLACE your old script with this -->
+<script>
+  function getHeading(resource) {
+  if (resource.title) {
+    return resource.title;
+  }
+  if (resource.unit_number) {
+    return `Unit ${resource.unit_number}`;
+  }
+  return "Overview";
+}
+
+(() => {
+  // Elements
+  const subjectListNodes = Array.from(document.querySelectorAll('.subject-list li'));
+  const resourcesContainer = document.getElementById('resources-container');
+  const subjectTitle = document.getElementById('subject-title');
+  const tabs = Array.from(document.querySelectorAll('.resource-tabs .tab'));
+
+  // small client cache: subjectId -> data
+  const cache = new Map();
+
+  // state
+  let currentSubjectId = null;
+  let currentGrouped = {};
+  let currentSubjectName = '';
+
+  // helpers
+  const setActiveSubjectNode = (node) => {
+    document.querySelectorAll('.subject-list li').forEach(li => li.classList.remove('active'));
+    if (node) node.classList.add('active');
+  };
+
+  const showLoader = () => {
+    resourcesContainer.classList.add('loading');
+  };
+
+  const hideLoader = () => {
+    resourcesContainer.classList.remove('loading');
+  };
+
+  // group resources by type then sort by unit_number
+  const groupResources = (resources) => {
+    const map = {};
+    (resources || []).forEach(r => {
+      const type = (r.type || 'others').toLowerCase().trim(); // ✅ normalize
+      if (!map[type]) map[type] = [];
+      map[type].push(r);
+    });
+
+    Object.keys(map).forEach(type => {
+      map[type].sort((a,b) => {
+        const A = (a.unit_number == null) ? 9999 : Number(a.unit_number);
+        const B = (b.unit_number == null) ? 9999 : Number(b.unit_number);
+        return A - B;
+      });
+    });
+
+    return map;
+  };
+
+  // render a given tab type from grouped data
+  const renderTab = (grouped, tabType) => {
+    resourcesContainer.innerHTML = '';
+
+    const normTab = (tabType || '').toLowerCase();
+    const list = grouped[normTab] || [];
+    if (!list.length) {
+      resourcesContainer.innerHTML = `<p class="hint">No items found.</p>`;
+      return;
+    }
+
+    const byUnit = {};
+    list.forEach(item => {
+      const key = getHeading(item);
+
+      if (!byUnit[key]) byUnit[key] = [];
+      byUnit[key].push(item);
+  });
+
+    Object.keys(byUnit).forEach(unitKey => {
+      const unitDiv = document.createElement('div');
+      unitDiv.className = 'unit';
+
+      const unitBtn = document.createElement('button');
+      unitBtn.className = 'unit-btn';
+      unitBtn.type = 'button';
+      unitBtn.innerHTML = `${unitKey} <span class="chev">▾</span>`;
+
+      const contentDiv = document.createElement('div');
+      contentDiv.className = 'unit-content';
+
+      byUnit[unitKey].forEach(item => {
+  if (item.content && item.content.trim()) {
+    const p = document.createElement('p');
+    p.innerHTML = item.content;
+    contentDiv.appendChild(p);
+  }
+
+  if (item.link) {
+    const a = document.createElement('a');
+    a.href = item.link;
+    a.target = '_blank';
+    a.rel = 'noopener';
+    a.textContent = item.link_text && item.link_text.trim()
+    ? item.link_text
+    : 'View Resource';
+    
+
+  a.className = 'resource-link'; // CSS hook
+    contentDiv.appendChild(a);
+  }
+});
+
+      unitDiv.appendChild(unitBtn);
+      unitDiv.appendChild(contentDiv);
+      resourcesContainer.appendChild(unitDiv);
+
+      unitBtn.addEventListener('click', () => {
+        const isOpen = contentDiv.style.display === 'block';
+        document.querySelectorAll('.unit-content').forEach(c => c.style.display = 'none');
+        document.querySelectorAll('.chev').forEach(s => s.textContent = '▾');
+        if (!isOpen) {
+          contentDiv.style.display = 'block';
+          unitBtn.querySelector('.chev').textContent = '▴';
+        }
+      });
+    });
+  };
+
+  const renderActiveTab = () => {
+    const activeTab =
+      (document.querySelector('.resource-tabs .tab.active')?.dataset.type || 'syllabus')
+      .toLowerCase(); // ✅ FIXED
+
+    renderTab(currentGrouped, activeTab);
+  };
+
+  const pushUrl = (subjectId) => {
+    const url = new URL(window.location.href);
+    url.searchParams.set('subject_id', subjectId);
+    window.history.pushState({ subjectId }, '', url.toString());
+  };
+
+  // ✅ ASYNC FUNCTION (await is valid here)
+  const loadSubject = async (subjectId, clickedEl=null, pushHistory=true) => {
+    if (!subjectId) return;
+
+    setActiveSubjectNode(clickedEl);
+    currentSubjectId = subjectId;
+    showLoader();
+
+    try {
+      let data;
+
+      if (cache.has(subjectId)) {
+        data = cache.get(subjectId);
+      } else {
+        const res = await fetch(`/api/resources/?subject_id=${encodeURIComponent(subjectId)}`, {
+          headers: { 'Accept': 'application/json' }
+        });
+
+        if (!res.ok) throw new Error('Network error');
+
+        data = await res.json(); // ✅ FIXED
+        console.log('API DATA:', data);
+        cache.set(subjectId, data);
+      }
+
+      currentSubjectName = ''; // ✅ remove middle subject name
+      currentGrouped = groupResources(data.resources || []);
+      renderActiveTab();
+
+      if (pushHistory) pushUrl(subjectId);
+
+    } catch (err) {
+      console.error(err);
+      resourcesContainer.innerHTML = `<p class="hint">Failed to load resources.</p>`;
+    } finally {
+      hideLoader();
+    }
+  };
+
+  // tab clicks
+  tabs.forEach(t => t.addEventListener('click', () => {
+    tabs.forEach(x => x.classList.remove('active'));
+    t.classList.add('active');
+    renderActiveTab();
+  }));
+
+  // subject clicks
+  subjectListNodes.forEach(li => {
+    li.addEventListener('click', () => {
+      loadSubject(li.dataset.subjectId, li, true);
+    });
+  });
+
+  // back/forward
+  window.addEventListener('popstate', (ev) => {
+    const sid = ev.state?.subjectId || new URL(window.location.href).searchParams.get('subject_id');
+    if (sid) {
+      loadSubject(sid, document.querySelector(`[data-subject-id="${sid}"]`), false);
+    }
+  });
+
+  // init
+  (() => {
+    const urlSid = new URL(window.location.href).searchParams.get('subject_id');
+    const first = subjectListNodes[0];
+    if (urlSid) loadSubject(urlSid, null, false);
+    else if (first) loadSubject(first.dataset.subjectId, first, true);
+  })();
+
+})();
+</script>
+{% endblock %}

@@ -1,0 +1,68 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>{% block title %}GenZX | Notes, PYQs, Syllabus & CGPA Calculator{% endblock %}</title>
+  <meta name="description" content="GenZX provides free notes, previous year questions, syllabus, and CGPA calculator for engineering and university students.">
+  <meta name="keywords" content="GenZX, engineering notes, PYQs, CGPA calculator, syllabus, BTech notes">
+  <meta name="author" content="GenZX Team">
+
+  <link rel="stylesheet" href="{% static 'css/base.css' %}">
+</head>
+<body>
+
+<!-- 🔹 Navbar -->
+<nav class="navbar">
+  <div class="nav-left">
+    <a href="/" class="logo-link">
+         <span class="logo">GENZ<span>X</span></span>
+    </a>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About Us</a></li>
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="/cgpa">CGPA Calculator</a></li>
+
+  </ul>
+
+  <div class="nav-right">
+    <button onclick="copyURL(this)" class="copy-btn">🔗 Copy URL</button>
+  </div>
+</nav>
+
+<!-- 🔹 Main content -->
+<main>
+  {% block content %}
+  <!-- Page-specific content will go here -->
+  {% endblock %}
+</main>
+
+<!-- 🔹 Footer -->
+<footer class="footer">
+  <p>
+    Disclaimer: GenZX does not claim ownership of any study materials available on this website.
+    All resources are shared in good faith to support students.
+  </p>
+</footer>
+
+<!-- 🔹 JS -->
+<script>
+function copyURL(btn){
+    navigator.clipboard.writeText(window.location.href);
+    btn.textContent = "✅ Copied";
+    btn.style.opacity = "0.7";
+    setTimeout(() => {
+        btn.textContent = "🔗 Copy URL";
+        btn.style.opacity = "1";
+    }, 1500);
+}
+</script>
+
+</body>
+</html>

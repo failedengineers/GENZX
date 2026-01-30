@@ -1,0 +1,264 @@
+/* ---------------- CGPA CONTAINER ---------------- */
+.cgpa-container {
+  max-width: 1000px;  
+  width: 90%;          
+  margin: 60px auto;
+  padding: 30px;
+  background: #0b0b0b;
+  color: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.7);
+  transition: transform 0.3s;
+}
+
+.cgpa-container:hover {
+  transform: translateY(-5px);
+}
+
+.cgpa-container h1 {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #4fd1c5;
+  font-size: 28px;
+  letter-spacing: 1px;
+}
+
+.info-text {
+  text-align: center;
+  font-size: 14px;
+  color: #bbb;
+  margin-bottom: 25px;
+}
+
+.range-label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+input[type="range"] {
+  width: 100%;
+  margin-bottom: 25px;
+  accent-color: #4fd1c5;
+}
+
+/* ---------------- SUBJECT ROW ---------------- */
+.subject-row {
+  display: flex;
+  justify-content: space-evenly;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+.subject-row input {
+  flex: 1 1 120px; 
+  max-width: 150px;
+  min-width: 100px;
+  padding: 12px;
+  border-radius: 8px;
+  border: none;
+  outline: none;
+  background: #1a1a1a;
+  color: white;
+  text-align: center;
+  transition: all 0.3s;
+}
+
+.subject-row input::placeholder {
+  color: #888;
+}
+
+.subject-row input:focus {
+  background: #111;
+  box-shadow: 0 0 8px #4fd1c5;
+  transform: scale(1.05);
+}
+
+/* ---------------- BUTTON ---------------- */
+.btn {
+  width: 100%;
+  padding: 14px;
+  background: linear-gradient(135deg, #4fd1c5, #38b2ac);
+  border: none;
+  border-radius: 10px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-top: 15px;
+  color: #fff;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.btn:hover {
+  background: linear-gradient(135deg, #38b2ac, #2c7a7b);
+  transform: scale(1.03);
+  box-shadow: 0 5px 15px rgba(63, 191, 182, 0.5);
+}
+
+/* ---------------- RESULT BOX ---------------- */
+.result-box {
+  margin-top: 30px;
+  text-align: center;
+  background: #111;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.result-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.8);
+}
+
+.result-box span {
+  color: #4fd1c5;
+  font-weight: bold;
+  font-size: 18px;
+}
+
+/* ---------------- FORMULA BOX ---------------- */
+.formula-box {
+  margin-top: 30px;
+  padding: 20px;
+  background: #111;
+  border-radius: 12px;
+  font-size: 14px;
+  color: #ccc;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.formula-box:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.7);
+}
+
+/* ---------------- GRADE REFERENCE ---------------- */
+.grade-reference {
+  margin-top: 40px;
+  background: #111;
+  padding: 25px;
+  border-radius: 12px;
+  color: #fff;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.6);
+}
+
+.grade-reference h3 {
+  text-align: center;
+  margin-bottom: 15px;
+  color: #4fd1c5;
+}
+
+.grade-reference table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grade-reference th,
+.grade-reference td {
+  padding: 12px;
+  text-align: center;
+  border-bottom: 1px solid #222;
+  transition: background 0.3s;
+}
+
+.grade-reference th {
+  background: #1a1a1a;
+  color: #4fd1c5;
+}
+
+.grade-reference tr:hover {
+  background: #1f1f1f;
+}
+
+.note {
+  margin-top: 12px;
+  font-size: 13px;
+  color: #aaa;
+  text-align: center;
+}
+
+/* ---------------- RESPONSIVE STYLES ---------------- */
+
+/* Tablets (up to 768px) */
+@media (max-width: 768px) {
+  .cgpa-container {
+    padding: 25px;
+    margin: 40px 15px;
+  }
+
+  .cgpa-container h1 {
+    font-size: 24px;
+  }
+
+  .subject-row input {
+    flex: 1 1 100px;
+  }
+
+  .formula-box, .grade-reference {
+    font-size: 13px;
+    padding: 15px;
+  }
+
+  .btn {
+    font-size: 15px;
+  }
+}
+
+/* Small phones (up to 480px) */
+@media (max-width: 480px) {
+  .cgpa-container {
+    padding: 15px;
+    margin: 30px 10px;
+  }
+
+  .cgpa-container h1 {
+    font-size: 22px;
+  }
+
+  .info-text {
+    font-size: 13px;
+  }
+
+  .subject-row input {
+    flex: 1 1 90px;
+  }
+
+  .btn {
+    font-size: 14px;
+    padding: 10px;
+  }
+
+  .formula-box, .grade-reference {
+    font-size: 12px;
+    padding: 10px;
+  }
+
+  .grade-reference th, .grade-reference td {
+    padding: 8px;
+    font-size: 12px;
+  }
+}
+
+/* Large desktops (min-width 1200px) */
+@media (min-width: 1200px) {
+  .cgpa-container {
+    padding: 40px;
+    margin: 60px auto;
+  }
+
+  .subject-row input {
+    flex: 1 1 140px;
+  }
+
+  .btn {
+    font-size: 17px;
+    padding: 14px;
+  }
+
+  .formula-box, .grade-reference {
+    font-size: 15px;
+    padding: 20px;
+  }
+}

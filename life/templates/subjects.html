@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<link rel="stylesheet" href="{% static 'css/subject.css' %}">
+<script src="{% static 'js/subject.js' %}" defer></script>
+
+<div class="subject-page">
+
+  <!-- LEFT SIDEBAR -->
+  <aside class="sidebar">
+    <h3>SELECT A SUBJECT</h3>
+    <ul class="subject-list">
+      {% for subject in subjects %}
+        <li data-subject-id="{{ subject.id }}">
+          {{ subject.name }}
+        </li>
+      {% empty %}
+        <li>No subjects available</li>
+      {% endfor %}
+    </ul>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <section class="content">
+    <h2>Welcome to GENZX</h2>
+    <p class="hint">
+      Select a subject to get started
+    </p>
+
+    <p class="disclaimer">
+      DISCLAIMER: All the assignments and lab files are as per your syllabus.
+    </p>
+  </section>
+
+</div>
+
+{% endblock %}

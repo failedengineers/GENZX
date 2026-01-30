@@ -1,0 +1,129 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GenZX | Notes, PYQs, Syllabus & CGPA Calculator</title>
+  <meta name="description" content="GenZX provides free notes, previous year questions, syllabus, and CGPA calculator for engineering and university students.">
+  <meta name="keywords" content="GenZX, engineering notes, PYQs, CGPA calculator, syllabus, BTech notes">
+  <meta name="author" content="GenZX Team">
+
+  <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+<body>
+
+<nav class="navbar">
+  <div class="nav-right">
+    
+    <span class="logo">GENZ<span>X</span></span>
+  </div>
+
+  <ul class="nav-links">
+    <li><a href="/">Home</a></li>
+    <li><a href="/about">About Us</a></li>
+    <li><a href="/contact">Contact</a></li>
+    <li><a href="/cgpa">CGPA Calculator</a></li>
+
+
+  </ul>
+
+  <div class="nav-right">
+    <button onclick="copyURL(this)" class="copy-btn">
+  🔗 Copy URL
+</button>
+
+  </div>
+</nav>
+<header class="hero">
+  <h1>GENZ<span>X</span></h1>
+  <p>Because Every Mark Counts</p>
+</header>
+
+<section class="box">
+  <h2>Get All Your Work Here</h2>
+
+  <form method="get" action="{% url 'subjects' %}">
+    
+    <select name="course_id" id="courseSelect" required>
+      <option value="">Select Course</option>
+      {% for course in courses %}
+        <option value="{{ course.id }}">{{ course.name }}</option>
+      {% endfor %}
+    </select>
+
+    <select name="sem_id" id="semesterSelect" required>
+      <option value="">Select Semester</option>
+      {% for sem in semesters %}
+        <option value="{{ sem.id }}">{{ sem.name }}</option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">GET YOUR WORK</button>
+  </form>
+
+</section>
+
+
+
+
+<section class="box">
+  <h2>WANT TO CONTRIBUTE?</h2>
+  <p>
+    Education is all about sharing.  
+    Share your notes, assignments, and resources.
+  </p>
+</section>
+
+<section class="box">
+  <h2>WHY GENZX?</h2>
+  <p>  
+    GenZX is built to save you from academic disasters.
+  </p>
+</section>
+
+<!-- 🔹 BACKEND CONNECTED FORM -->
+
+<script>
+  document.getElementById("courseSelect").addEventListener("change", async function() {
+    const courseId = this.value;
+    const semSelect = document.getElementById("semesterSelect");
+
+    // Clear previous semester options
+    semSelect.innerHTML = '<option value="">Select Semester</option>';
+
+    if(courseId) {
+        try {
+            // Fetch semesters from backend
+            const response = await fetch(`/get-semesters/?course=${courseId}`);
+            const data = await response.json();
+            console.log(data);   // 👈 PUT IT HERE
+
+
+            // Populate semester dropdown dynamically
+            data.semesters.forEach(sem => {
+               const option = document.createElement("option");
+               option.value = sem.id;                 // DB ID
+               option.textContent = "Semester " + sem.number;  // visible text
+               semSelect.appendChild(option);});
+            // Automatically select first semester
+            if(data.semesters.length > 0) semSelect.value = data.semesters[0].id;
+
+        } catch(err) {
+            console.error("Failed to fetch semesters:", err);
+        }
+    }
+});
+
+</script>
+
+<script src="{% static 'js/main.js' %}"></script>
+</body>
+
+<footer class="footer">
+  <p>
+    Disclaimer: GenZX does not claim ownership of any study materials available on this website.
+    All resources are shared in good faith to support students.
+  </p>
+</footer>
+</html>
