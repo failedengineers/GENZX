@@ -8,7 +8,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 load_dotenv(os.path.join(BASE_DIR.parent, ".env"))
 # SECURITY
 SECRET_KEY = os.environ.get("DJANGO_SECRET_KEY")
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(",")
 
