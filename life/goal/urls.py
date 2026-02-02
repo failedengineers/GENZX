@@ -3,7 +3,7 @@ from django.urls import path
 from goal import views
 from django.contrib import sitemaps
 from django.contrib.sitemaps.views import sitemap
-from app.sitemaps import StaticViewSitemap
+from goal.sitemaps import StaticViewSitemap
 
 sitemaps = {
     "static": StaticViewSitemap,
