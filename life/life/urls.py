@@ -17,6 +17,13 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path,include
 from django.conf.urls import handler404,handler500
+from django.contrib import sitemaps
+from django.contrib.sitemaps.views import sitemap
+from app.sitemaps import StaticViewSitemap
+
+sitemaps = {
+    "static": StaticViewSitemap,
+}
 
 handler404 = "goal.views.custom_404"
 handler500 = "django.views.defaults.server_error"
@@ -26,4 +33,6 @@ handler500 = "django.views.defaults.server_error"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('goal.urls')),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+
 ]
