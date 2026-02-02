@@ -33,6 +33,6 @@ handler500 = "django.views.defaults.server_error"
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('',include('goal.urls')),
-    path("sitemaps.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
 
 ]
