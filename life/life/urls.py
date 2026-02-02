@@ -19,7 +19,7 @@ from django.urls import path,include
 from django.conf.urls import handler404,handler500
 from django.contrib import sitemaps
 from django.contrib.sitemaps.views import sitemap
-from app.sitemaps import StaticViewSitemap
+from goal.sitemaps import StaticViewSitemap
 
 sitemaps = {
     "static": StaticViewSitemap,
