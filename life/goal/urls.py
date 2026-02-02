@@ -1,9 +1,6 @@
 from django.contrib import admin
 from django.urls import path
 from goal import views
-from django.contrib import sitemaps
-from django.contrib.sitemaps.views import sitemap
-from goal.sitemaps import StaticViewSitemap
 
 sitemaps = {
     "static": StaticViewSitemap,
@@ -19,7 +16,6 @@ urlpatterns = [
     path('cgpa/',views.cgpa,name='cgpa'),
     path('resources/', views.res_page, name='resources'),  
     path("api/resources/", views.api_resources, name="api_resources"),
-    path("sitemaps.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
 
 
        # main page
