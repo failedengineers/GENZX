@@ -19,7 +19,7 @@ urlpatterns = [
     path('cgpa/',views.cgpa,name='cgpa'),
     path('resources/', views.res_page, name='resources'),  
     path("api/resources/", views.api_resources, name="api_resources"),
-    path("sitemap.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
+    path("sitemaps.xml", sitemap, {"sitemaps": sitemaps}, name="sitemap"),
 
 
        # main page
