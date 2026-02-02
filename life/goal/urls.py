@@ -2,9 +2,7 @@ from django.contrib import admin
 from django.urls import path
 from goal import views
 
-sitemaps = {
-    "static": StaticViewSitemap,
-}
+
 urlpatterns = [
     path('',views.home,name='home'),
     path("get-semesters/", views.get_semesters, name="get_semesters"),
