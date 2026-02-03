@@ -21,7 +21,12 @@ def get_semesters(request):
 
     if not course_id or not course_id.isdigit():
         return JsonResponse({"semesters": []})
-    semesters = Semester.objects.filter(course_id=course_id) \.order_by("number") \.values("id", "number")
+    semesters = (
+    Semester.objects
+    .filter(course_id=course_id)
+    .order_by("number")
+    .values("id", "number")
+)
 
     return JsonResponse({
         "semesters": list(semesters)
