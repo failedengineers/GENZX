@@ -14,6 +14,7 @@ urlpatterns = [
     path('cgpa/',views.cgpa,name='cgpa'),
     path('resources/', views.res_page, name='resources'),  
     path("api/resources/", views.api_resources, name="api_resources"),
+    path('file/',views.file,name="file_editor")
 
 
        # main page
