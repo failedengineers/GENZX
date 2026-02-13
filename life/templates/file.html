@@ -1,0 +1,311 @@
+{% extends "base.html" %}
+{% load static %}
+{% block content %}
+
+<style>
+/* ================= GLOBAL ================= */
+.pdf-container {
+    display: flex;
+    gap: 30px;
+    padding: 60px 8%;
+    background: radial-gradient(circle at top left, #1a1a2e, #0f0f0f);
+    min-height: 85vh;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Glow Background */
+.pdf-container::before {
+    content: "";
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: #8a2be2;
+    filter: blur(150px);
+    opacity: 0.2;
+    top: -100px;
+    left: -100px;
+    z-index: 0;
+}
+
+/* ================= SIDEBAR ================= */
+.pdf-sidebar {
+    width: 340px;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    padding: 22px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 15px 40px rgba(138,43,226,0.2);
+    transition: 0.35s;
+    z-index: 2;
+}
+
+/* Replacement Fields */
+.replace-group {
+    margin-bottom: 18px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+}
+
+.replace-group label {
+    font-size: 12px;
+    color: #c084fc;
+    margin-bottom: 6px;
+}
+
+.replace-group input {
+    width: 100%;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    border: 1px solid #2a2a2a;
+    background: #1c1c1c;
+    color: white;
+    transition: 0.25s;
+}
+
+.replace-group input:focus {
+    border-color: #8a2be2;
+    box-shadow: 0 0 12px rgba(138,43,226,0.35);
+    outline: none;
+}
+
+.remove-btn {
+    position: absolute;
+    right: -6px;
+    top: -6px;
+    background: crimson;
+    border: none;
+    color: white;
+    font-size: 12px;
+    padding: 4px 8px;
+    border-radius: 18px;
+    cursor: pointer;
+}
+
+/* Add Button */
+.add-btn {
+    width: 100%;
+    padding: 10px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(45deg,#7c3aed,#a855f7);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+/* ================= MAIN AREA ================= */
+.pdf-main {
+    flex: 1;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(25px);
+    border-radius: 20px;
+    padding: 34px;
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 15px 50px rgba(138,43,226,0.25);
+    position: relative;
+    z-index: 2;
+}
+
+/* File Upload */
+.file-upload {
+    border: 2px dashed #555;
+    padding: 36px;
+    text-align: center;
+    border-radius: 14px;
+    cursor: pointer;
+    transition: 0.25s;
+}
+
+.file-upload:hover {
+    border-color: #8a2be2;
+    background: rgba(138,43,226,0.06);
+}
+
+.file-upload input { display: none; }
+
+.upload-text { color: #aaa; font-size: 15px; }
+
+.file-name { margin-top: 10px; color: #c084fc; font-weight: 500; }
+
+/* Progress Bar */
+.progress-bar { width: 100%; height: 6px; background: #222; border-radius: 10px; margin-top: 18px; overflow: hidden; display: none; }
+.progress { height: 100%; width: 0%; background: linear-gradient(45deg,#7c3aed,#a855f7); transition: width 0.25s; }
+
+/* Submit */
+.submit-btn {
+    margin-top: 22px;
+    padding: 12px 25px;
+    font-size: 15px;
+    border-radius: 12px;
+    border: none;
+    background: linear-gradient(45deg,#7c3aed,#a855f7);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* Spinner & Modal */
+.spinner { display: none; margin-top: 12px; border: 4px solid #222; border-top: 4px solid #8a2be2; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+.success-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 9999; }
+.success-box { background: #1c1c1c; padding: 26px; border-radius: 12px; text-align: center; box-shadow: 0 15px 40px rgba(138,43,226,0.5); }
+
+/* Layout adjustments */
+.pdf-container { display: flex; justify-content: center; align-items: flex-start; gap: 30px; padding: 40px 6%; }
+form { display: flex; width: 100%; gap: 28px; }
+.pdf-sidebar { width: 320px; flex-shrink: 0; }
+.pdf-main { flex: 1; max-width: 920px; }
+
+/* Responsive: stacked layout on small screens */
+@media (max-width: 880px) {
+    .pdf-container { padding: 24px 5%; }
+    form { flex-direction: column; }
+    .pdf-sidebar { width: 100%; order: 0; position: relative; left: 0; margin-bottom: 18px; }
+    .pdf-main { width: 100%; max-width: none; order: 1; }
+    .remove-btn { right: 6px; top: 6px; } /* easier touch */
+    .add-btn { padding: 12px; }
+}
+</style>
+
+<div class="pdf-container">
+
+    <form action="{% url 'file_editor' %}" 
+        method="POST" 
+        enctype="multipart/form-data"
+        onsubmit="return validateTextFields()">
+        {% csrf_token %}
+
+        <!-- SIDEBAR (INSIDE FORM) -->
+        <div class="pdf-sidebar" id="sidebar">
+            <h3>Text Replacement</h3>
+
+            <p style="font-size:13px; color:#aaa; margin-bottom:15px;">
+                Enter the text you want to replace and what it should become.
+            </p>
+
+            <div id="replace-container">
+                <div class="replace-group">
+                    <label>Existing Text (Text in PDF)</label>
+                    <input type="text" name="old_value[]" placeholder="Example: John Doe" required>
+
+                    <label>New Text (Replace With)</label>
+                    <input type="text" name="new_value[]" placeholder="Example: Kalash Gulati" required>
+
+                    <button type="button" class="remove-btn" onclick="removeField(this)">×</button>
+                </div>
+            </div>
+
+            <button type="button" class="add-btn" onclick="addReplacement()">+ Add Replacement</button>
+        </div>
+
+        <!-- MAIN AREA -->
+        <div class="pdf-main">
+            <h2>Upload PDF</h2>
+
+            <label class="file-upload" id="fileUploadLabel">
+                <input type="file"
+                        name="pdf_file"
+                        accept=".pdf"
+                        required
+                        onchange="validateFileSize(this); showFileName(this);">
+                <div class="upload-text">
+                    Drag & Drop your PDF or Click to Upload
+                </div>
+                <div class="file-name" id="fileName"></div>
+            </label>
+
+            <div class="progress-bar" id="progressBar">
+                <div class="progress" id="progress"></div>
+            </div>
+
+            <button type="submit" class="submit-btn">
+                Generate Edited PDF
+            </button>
+
+            <div class="spinner" id="spinner"></div>
+        </div>
+
+    </form>
+
+</div>
+
+<div class="success-modal" id="successModal">
+    <div class="success-box">
+        <h3>✅ PDF Processed Successfully</h3>
+        <button class="submit-btn" onclick="closeModal()">Close</button>
+    </div>
+</div>
+
+<script>
+/* Add / Remove replacement rows */
+function addReplacement(){
+    const container = document.getElementById("replace-container");
+    const div = document.createElement("div");
+    div.classList.add("replace-group");
+    div.innerHTML = `
+        <label>Existing Text (Text in PDF)</label>
+        <input type="text" name="old_value[]" placeholder="Example: John Doe" required>
+        <label>New Text (Replace With)</label>
+        <input type="text" name="new_value[]" placeholder="Example: Kalash Gulati" required>
+        <button type="button" class="remove-btn" onclick="removeField(this)">×</button>
+    `;
+    container.appendChild(div);
+}
+function removeField(btn){ btn.parentElement.remove(); }
+
+/* File size check + file name display + fake progress */
+function validateFileSize(input){
+    const file = input.files[0];
+    const maxSize = 10 * 1024 * 1024; // 10MB
+    if(file && file.size > maxSize){
+        alert("File size must be less than 10MB");
+        input.value = "";
+        document.getElementById("fileName").innerText = "";
+        document.getElementById("progressBar").style.display = "none";
+    }
+}
+function showFileName(input){
+    if(!input.files || !input.files[0]) return;
+    document.getElementById("fileName").innerText = input.files[0].name;
+    const bar = document.getElementById("progressBar");
+    const progress = document.getElementById("progress");
+    bar.style.display = "block";
+    progress.style.width = "0%";
+    let width = 0;
+    const interval = setInterval(()=>{
+        if(width >= 90){ clearInterval(interval); } // stay below 100 until real upload
+        else { width += 10; progress.style.width = width + "%"; }
+    }, 80);
+}
+
+/* Form validation: ensure each pair row is filled */
+function validateTextFields(){
+    const oldValues = document.querySelectorAll("input[name='old_value[]']");
+    const newValues = document.querySelectorAll("input[name='new_value[]']");
+    for(let i=0;i<oldValues.length;i++){
+        if(!oldValues[i].value || oldValues[i].value.trim() === "" || !newValues[i] || newValues[i].value.trim() === ""){
+            alert("Please fill both Existing and New text for every replacement row.");
+            return false;
+        }
+    }
+    // show spinner while submitting (user feedback)
+    document.getElementById("spinner").style.display = "block";
+    return true;
+}
+
+/* Modal control */
+function closeModal(){ document.getElementById("successModal").style.display = "none"; }
+
+/* Sidebar toggle (unused on larger screens) */
+function toggleSidebar(){
+    document.getElementById("sidebar").classList.toggle("active");
+}
+</script>
+
+{% endblock %}
