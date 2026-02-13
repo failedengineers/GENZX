@@ -285,7 +285,7 @@ function showFileName(input) {
 
     let width = 0;
     const interval = setInterval(() => {
-        if (width >= 90) clearInterval(interval); // stay below 100 until real upload
+        if (width >= 90) clearInterval(interval);
         else { width += 10; progress.style.width = width + "%"; }
     }, 80);
 }
@@ -306,14 +306,6 @@ function validateTextFields() {
     return true;
 }
 
-/* ================= Auto Reload After Download ================= */
-document.getElementById("replaceForm").addEventListener("submit", function () {
-    // Delay reload so download starts
-    setTimeout(() => {
-        location.reload();
-    }, 2000); // adjust delay if file is large
-});
-
 /* ================= Modal Control (Optional) ================= */
 function closeModal() {
     document.getElementById("successModal").style.display = "none";
@@ -324,5 +316,6 @@ function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("active");
 }
 </script>
+
 
 {% endblock %}
