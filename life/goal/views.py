@@ -1,9 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from django.http import JsonResponse, Http404
+from django.http import JsonResponse, Http404,HttpResponseRedirect,HttpResponse
 from django.contrib import messages
 import datetime
+from .forms import UploadFileForm # ADD THIS IN UPDATED GITHUB
 
 from goal.models import Course, Semester, Subject, contact, Resource
+from .utils import editor
+
+
+#from django.http import HttpResponseRedirect add this
+#from .forms import UploadFileForm add this 
 
 
 def base(request):
@@ -15,18 +21,15 @@ def home(request):
     return render(request, 'index.html', {'courses': courses})
 
 
+
 # semester list
 def get_semesters(request):
     course_id = request.GET.get("course")
 
     if not course_id or not course_id.isdigit():
         return JsonResponse({"semesters": []})
-    semesters = (
-    Semester.objects
-    .filter(course_id=course_id)
-    .order_by("number")
-    .values("id", "number")
-)
+
+    semesters = Semester.objects.filter(course_id=course_id).values("id", "number")
 
     return JsonResponse({
         "semesters": list(semesters)
@@ -191,3 +194,23 @@ from django.shortcuts import render
 def custom_404(request, exception):
     return render(request, "404.html", status=404)
 
+def file(request):
+    if request.method == "POST":
+
+        old=request.POST.getlist('old_value[]')
+        new=request.POST.getlist('new_value[]')
+        print(old)
+        print(new)
+        if "" in old:
+            return HttpResponse("Values cannot be empty")
+        if "" in new:
+            return HttpResponse("Values cannot be empty")
+
+        file=request.FILES['pdf_file']
+        print(old)
+        print(new)
+        print(file)
+        response=editor(file,old,new)
+        return response
+
+    return render(request,'file.html')
