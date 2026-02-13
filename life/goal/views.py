@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.http import JsonResponse, Http404,HttpResponseRedirect,HttpResponse
 from django.contrib import messages
 import datetime
-from .forms import UploadFileForm # ADD THIS IN UPDATED GITHUB
+#from .forms import UploadFileForm # ADD THIS IN UPDATED GITHUB
 
 from goal.models import Course, Semester, Subject, contact, Resource
 from .utils import editor
