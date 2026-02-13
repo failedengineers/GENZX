@@ -1,5 +1,5 @@
+ import fitz
 
-import pymupdf
 import random
 
 #import random
@@ -8,7 +8,7 @@ from django.http import FileResponse
 def editor(file,list1,list2):
     print(type(file))
     og=file.name.split('.')[0]
-    doc = pymupdf.open(stream=file.read(), filetype="pdf")
+    doc = fitz.open(stream=file.read(), filetype="pdf")
     pages=doc
     l=list1
     s=list2
